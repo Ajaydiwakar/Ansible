@@ -1,0 +1,6 @@
+- hosts: web1
+  tasks:
+  - name: create filesystem
+    filesystem:
+      fstype: ext4
+      dev: /dev/vg_sql/lv_data 
