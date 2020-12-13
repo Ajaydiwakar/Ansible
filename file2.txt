@@ -1,1 +1,2 @@
- Thsi is version 1 of file2
+This si check of rec merge 
+Thsi is version 1 of file2
