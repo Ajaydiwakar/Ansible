@@ -1,2 +1,1 @@
-This si check of rec merge 
-Thsi is version 1 of file2
+Thsi is feature merge 2
