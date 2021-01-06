@@ -1,0 +1,70 @@
+---
+
+- hosts: all
+  become: true
+  become_user: root
+  tasks:
+      - name: Upgrade all packages on Debian and Ubuntu servers
+        apt:
+           name: "*"
+           state: latest
+           update_cache: yes
+           force_apt_get: yes
+        when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+      - name: Upgrade all installed packages for openSUSE
+        zypper:
+           name: "*"
+           state: latest
+        when: ansible_distribution == "openSUSE Leap"
+
+      - name: Upgrade all installed packages for fedora and centos
+        yum:
+           name: "*"
+           state: latest
+
+      - name: installing epel-release on fedora
+        yum:
+           name: epel-release
+           state: latest
+        when: ansible_distribution == "CentOS" or ansible_distribution == "Amazon Linux" or ansible_distribution == "RedHat Linux"
+
+      - name: installing nginx
+        apt:
+           name: nginx
+           state: latest
+
+      - name: create www directory
+        file:
+           path: /var/www/login
+           state: directory
+           mode: '0775'
+
+      - name: delete default nginx site
+        file:
+           path: /etc/nginx/sites-enabled/default
+           state: absent
+
+      - name: installing git
+        package:
+           name: git
+           state: present
+
+      - name: cloning git repo
+        command: git clone https://github.com/Ajaydiwakar/login.git
+
+      - name: copying the cloned repo to var folder
+        command: cp -R /root/login /var/www/
+
+      - name: " copying the login file conf in nginxfolder"
+        copy:
+            src: /root/sourcecode/login
+            dest: /etc/nginx/sites-available
+
+      - name: "creating symbolic link for login"
+        command: ln -s /etc/nginx/sites-available/login /etc/nginx/sites-enabled/login
+
+      - name: restarting nginx
+        service:
+             name: nginx
+             state: restarted
+
